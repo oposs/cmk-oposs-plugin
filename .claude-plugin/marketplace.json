@@ -1,0 +1,22 @@
+{
+  "name": "cmk-oposs-plugin-dev",
+  "owner": {
+    "name": "OETIKER+PARTNER AG",
+    "email": "tobi@oetiker.ch"
+  },
+  "metadata": {
+    "description": "Marketplace for developing the cmk-oposs-plugin skill itself. The published entry lives in oposs/claude-plugins."
+  },
+  "plugins": [
+    {
+      "name": "cmk-oposs-plugin",
+      "source": ".",
+      "description": "Build, upgrade and package Checkmk 2.3.x monitoring plugins - agent-based and SNMP checks, special agents, metrics and graphing, rulesets, the agent bakery, notifications, and MKP packaging, with a test harness that runs against the real Checkmk API.",
+      "author": {
+        "name": "Tobias Oetiker <tobi@oetiker.ch>"
+      },
+      "keywords": ["checkmk", "monitoring", "mkp", "snmp", "plugins"],
+      "category": "development"
+    }
+  ]
+}

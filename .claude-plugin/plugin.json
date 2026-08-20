@@ -1,0 +1,11 @@
+{
+  "name": "cmk-oposs-plugin",
+  "description": "Build, upgrade and package Checkmk 2.3.x monitoring plugins - agent-based and SNMP checks, special agents, metrics and graphing, rulesets, the agent bakery, notifications, and MKP packaging, with a test harness that runs against the real Checkmk API.",
+  "version": "2.3.0",
+  "author": {
+    "name": "Tobias Oetiker <tobi@oetiker.ch>"
+  },
+  "homepage": "https://github.com/oposs/cmk-oposs-plugin",
+  "repository": "https://github.com/oposs/cmk-oposs-plugin",
+  "keywords": ["checkmk", "monitoring", "mkp", "snmp", "plugins"]
+}
