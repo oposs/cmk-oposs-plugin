@@ -116,28 +116,17 @@ the plugin repo to see what it would install.
 What repo-infra installs calls this action; the two halves meet at
 `uses: oposs/mkp-builder@v2`. Its inputs and outputs are documented above.
 
-## MKP Package Format
+## MKP package format
 
-The generated `.mkp` file is a gzip-compressed tar containing:
+Not here. What an `.mkp` actually is — the tar-of-tars layout, the `info` and `info.json`
+metadata, and how files under `local/` map into each component archive — is documented by
+the action that produces it:
+[`cmk-mkp-format.md`](https://github.com/oposs/mkp-builder/blob/main/cmk-mkp-format.md).
 
-```
-package.mkp
-+-- info                    # Python dict (pprint format)
-+-- info.json               # JSON metadata
-+-- agents.tar              # Agent plugins and scripts
-+-- cmk_addons_plugins.tar  # Check plugins, graphing, rulesets
-+-- lib.tar                 # Bakery plugins
-\-- notifications.tar       # Notification scripts
-```
-
-## File Mapping
-
-| Source | Target tar | Path in tar |
-|--------|-----------|-------------|
-| `local/share/check_mk/agents/plugins/*` | agents.tar | `plugins/*` |
-| `local/lib/python3/cmk_addons/plugins/NAME/*` | cmk_addons_plugins.tar | `NAME/*` |
-| `local/lib/python3/cmk/base/cee/plugins/bakery/NAME.py` | lib.tar | `cmk/base/cee/plugins/bakery/NAME.py` |
-| `local/share/check_mk/notifications/*` | notifications.tar | notification files |
+You do not need it to build a plugin. Put the files in the layout described under
+[Required Directory Structure](#required-directory-structure) above and the action does the
+packing. Read it when you are debugging a package that installs but behaves oddly, or
+adding a component type this skill does not cover.
 
 ## Troubleshooting
 

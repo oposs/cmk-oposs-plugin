@@ -452,8 +452,9 @@ source of truth for the version, and `assets/CHANGES.md.template` is a starting 
 repo that has none. Use `### New`, not `### Added`.
 
 Read `references/mkp-builder.md` for the full MKP builder reference (the `.mkp-builder.ini`
-configuration, required directory structure, action inputs/outputs, local testing,
-troubleshooting, and MKP format details).
+configuration, required directory structure, action inputs/outputs, local testing and
+troubleshooting). The `.mkp` format itself is documented by the action that produces it:
+[`cmk-mkp-format.md`](https://github.com/oposs/mkp-builder/blob/main/cmk-mkp-format.md).
 
 ## Upgrading Existing Plugins
 
