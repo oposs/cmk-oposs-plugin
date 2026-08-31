@@ -489,6 +489,9 @@ snmpwalk -v2c -c public host .1.3.6.1.2.1.1       # SNMP exploration
 | Metrics conflict | Unprefixed metric names | Use `company_plugin_metric` format |
 | `cmk-validate-plugins`: `Unable to transform value` | `check_default_parameters` uses plain `None` for a SimpleLevels parameter | Use `("no_levels", None)` |
 | Levels appear configured when the user turned them off | `if levels:` — `("no_levels", None)` is truthy | Test `levels[0] == "fixed"` explicitly |
+| Check plugin fails to load, signature error naming your function | `sections=` has 2+ entries but the function still takes `section` | One `section_<name>` parameter per entry, in list order |
+| `Wrong type annotation: multiple sections must be of type <NodeSection> \| None` | Section parameters annotated on a multi-section plugin | Annotate `X \| None`, or leave them unannotated |
+| A short check interval costs far more SNMP than expected | A cheap fast tree shares a section with an expensive slow one; caching is per section | Split the section, cache the slow half (`02-snmp-plugins.md`) |
 | Ruleset doesn't apply | Wrong condition type | Match `HostCondition`/`HostAndItemCondition` to discovery |
 | SimpleLevels crash | Unwrapping the tuple | Pass directly to `check_levels()` |
 | Graphs show wrong scale | Non-base units stored | Convert to seconds/bytes before yielding |

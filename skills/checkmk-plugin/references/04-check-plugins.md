@@ -83,6 +83,79 @@ check_plugin_my_service = CheckPlugin(
 )
 ```
 
+### One Check Plugin, Several Sections
+
+`sections=` takes a list, and the list length changes the **required argument names** of
+your discovery and check functions. Checkmk validates the signature at load time
+(`cmk/base/api/agent_based/register/utils.py`, `validate_function_arguments`):
+
+| `sections=` | Expected parameters |
+|-------------|---------------------|
+| one entry | `section` |
+| two or more | `section_<name>` for each, **in the order of the list** |
+
+```python
+snmp_section_acme_fast = SNMPSection(name="acme_fast", ...)
+snmp_section_acme_slow = SNMPSection(name="acme_slow", ...)
+
+def discover_acme(section_acme_fast, section_acme_slow):
+    ...
+
+def check_acme(item, section_acme_fast, section_acme_slow):
+    ...
+
+check_plugin_acme = CheckPlugin(
+    name="acme",
+    sections=["acme_fast", "acme_slow"],   # order defines the argument order
+    service_name="ACME %s",
+    discovery_function=discover_acme,
+    check_function=check_acme,
+)
+```
+
+Get a name or the order wrong and the plugin fails to load with a signature error — it is
+not silently ignored, but the message points at your function, not at `sections=`.
+
+**Any section may be `None`.** Checkmk passes `None` for a section that produced no data,
+and with per-section fetch intervals the two can genuinely arrive on different runs. Merge
+defensively and do not treat a missing section as empty data:
+
+```python
+def check_acme(item, section_acme_fast, section_acme_slow):
+    data = {}
+    for section in (section_acme_slow, section_acme_fast):   # fresher last
+        if section and item in section:
+            data.update(section[item])
+    if not data:
+        return
+    if "status" not in data:
+        yield Result(state=State.UNKNOWN, summary="Status unavailable (acme_slow missing)")
+    else:
+        ...
+```
+
+That guard matters: comparing two fields that are both absent easily produces a confident
+`OK` with an empty summary.
+
+**If you annotate the section parameters, they must be Optional.** With more than one
+section Checkmk enforces it:
+
+```python
+# WRONG - TypeError: Wrong type annotation:
+#         multiple sections must be of type `<NodeSection> | None`
+def check_acme(item, section_acme_fast: Section, section_acme_slow: Section):
+
+# RIGHT
+def check_acme(item, section_acme_fast: Section | None, section_acme_slow: Section | None):
+
+# ALSO FINE - no annotation at all
+def check_acme(item, section_acme_fast, section_acme_slow):
+```
+
+Splitting one section into two changes nothing a user sees — service names, items and
+metric names all come from the check plugin — so an existing installation needs no
+rediscovery. See `02-snmp-plugins.md` for the main reason to do it.
+
 ### Using check_levels Helper
 
 **CRITICAL**: Always use `check_levels` for threshold checking!

@@ -9,6 +9,21 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### New
+
+- `04-check-plugins.md` documents one check plugin consuming several sections: the
+  `section_<name>` argument convention and its ordering, that Checkmk validates the
+  signature at load time, that any section may arrive as `None`, and that annotating the
+  parameters on a multi-section plugin requires `| None`. None of this was covered, and
+  the argument naming is not guessable - it is enforced in
+  `cmk/base/api/agent_based/register/utils.py`.
+- `02-snmp-plugins.md` documents splitting a section to control fetch cost: a section is
+  the unit of both fetching and caching, `snmp_check_interval` can only slow a section
+  down, so bundling a cheap fast-moving tree with an expensive slow-moving one makes a
+  short check interval unaffordable. Includes measured per-row costs from a Nokia ISAM
+  (5.8 ms/row versus 23 ms/row, because the second table reads SFP hardware on demand)
+  and how to read `cmk_time_snmp` off the `Check_MK` service to find where time goes.
+
 ### Changed
 
 - The skill now lives in its own repository. It was part of `oposs/mkp-builder`, so a

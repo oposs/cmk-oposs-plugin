@@ -145,6 +145,58 @@ snmp_section_complex = SNMPSection(
 )
 ```
 
+### Splitting a Section to Control Fetch Cost
+
+A section is Checkmk's unit of fetching **and** of caching. The "Fetch intervals for SNMP
+sections" ruleset (`snmp_check_interval`) sets how often each section is re-walked, and it
+can only make a section **slower** — never faster than the `Check_MK` service runs. So the
+grouping of trees into sections decides what a short check interval costs.
+
+Put a cheap fast-moving tree in the same section as an expensive slow-moving one and you
+cannot poll the first often without paying for the second every time.
+
+Measure before grouping — cost per row varies enormously, because some tables are read
+from device hardware on demand:
+
+```bash
+time snmpbulkwalk -v2c -c public device .1.3.6.1.4.1.637.61.1.35.21.57.1  # 448 rows,  2.6 s
+time snmpbulkwalk -v2c -c public device .1.3.6.1.4.1.637.61.1.56.5.1      # 1080 rows, 24.9 s
+```
+
+Same device, same walk mechanics: 5.8 ms per row against 23 ms per row, because the second
+table reads SFP optics hardware per request. Bundled together, a 60 s check interval on a
+real 16-port OLT cost 3.8x the SNMP of a 300 s one. Split, with the slow half on a 300 s
+fetch interval, the same 60 s interval cost 1.2x — the counters people actually watch got
+five times fresher for a 21% increase.
+
+The split itself:
+
+```python
+# fast: leave uncached, fetched on every check run
+snmp_section_acme_counters = SNMPSection(
+    name="acme_counters", detect=DETECT,
+    parse_function=parse_counters, fetch=[SNMPTree(base=".1.3...57.1", oids=[...])],
+)
+
+# slow: give this one a 300 s "Fetch intervals for SNMP sections" rule
+snmp_section_acme_inventory = SNMPSection(
+    name="acme_inventory", detect=DETECT,
+    parse_function=parse_inventory, fetch=[SNMPTree(base=".1.3...56.5.1", oids=[...])],
+)
+```
+
+Both sections need the same `detect`. The check plugin then consumes both — see
+"One Check Plugin, Several Sections" in `04-check-plugins.md` for the signature rules and
+for handling a section that is `None`.
+
+Checkmk's own `Check_MK` service records where the time goes, which is the fastest way to
+find out whether SNMP is even your problem:
+
+```bash
+# perfdata on the Check_MK service: cmk_time_snmp, cmk_time_ds, execution_time
+rrdtool fetch var/check_mk/rrd/HOST/Check_MK.rrd AVERAGE -r 300 -s -1d
+```
+
 ### Detection Specifications
 
 **⚠️ CRITICAL**: Make your detection specific to avoid false positives! A generic detection like `exists(".1.3.6.1.2.1.1.1.0")` will match ALL SNMP devices. Always use vendor-specific OIDs or unique string patterns.
