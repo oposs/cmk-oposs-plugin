@@ -23,12 +23,17 @@ import shutil
 import subprocess
 import sys
 
-# The Checkmk version this plugin targets. Raise it to find out what breaks.
-CMK_VERSION = "2.3.0"
+# The Checkmk version this plugin targets, as a git tag of the Checkmk
+# repository. Raise it to find out what breaks. Tags carry a `v`: `2.3.0`
+# without it is the 2.3.0 maintenance branch, which moves, so a cached clone
+# and a fresh CI clone of it test against different code.
+CMK_VERSION = "v2.3.0p52"
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
 CACHE = ROOT / ".cmk-api" / CMK_VERSION
+# From Checkmk 2.4 on, cmk.ccc is a package of its own: add "cmk-ccc" here
+# when CMK_VERSION is a 2.4 tag and the plugin imports cmk.ccc.
 API_PACKAGES = ("cmk-agent-based", "cmk-graphing", "cmk-rulesets", "cmk-server-side-calls")
 
 
