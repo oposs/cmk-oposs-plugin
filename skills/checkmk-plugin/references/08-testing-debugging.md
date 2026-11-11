@@ -11,7 +11,7 @@ mkdir -p tests
 cp -r <skill-dir>/assets/tests/.              tests/
 cp    <skill-dir>/assets/pytest.ini           pytest.ini
 cp    <skill-dir>/assets/requirements-dev.txt requirements-dev.txt
-echo '.cmk-api/' >> .gitignore
+printf '.cmk-api/\n.pytest-tmp/\n' >> .gitignore
 pip install -r requirements-dev.txt
 pytest -q
 ```
@@ -22,8 +22,12 @@ pytest -q
 the top of that file, and caches it under the gitignored `.cmk-api/`:
 
 ```python
-CMK_VERSION = "2.3.0"   # the Checkmk version this plugin targets
+CMK_VERSION = "v2.3.0p52"   # a Checkmk tag: the version this plugin targets
 ```
+
+`CMK_VERSION` is a git ref of the Checkmk repository. Use a tag, which carries a `v`
+(`v2.3.0p52`). `2.3.0` without the `v` is the 2.3.0 maintenance branch: it moves, so the
+cached clone on one machine and the fresh clone in CI test against different code.
 
 It is a blobless sparse clone of four packages — `cmk-agent-based`, `cmk-graphing`,
 `cmk-rulesets`, `cmk-server-side-calls` — roughly 7 MB and a second or two. Nothing is
@@ -48,6 +52,20 @@ real plugins:
 Pinning a real version is also what makes the suite able to *report* drift. Point the same
 harness at Checkmk 2.2.0 and 5 of 7 modules fail, naming exactly what moved. Raise
 `CMK_VERSION` when you upgrade, and CI tells you what to fix before a user finds it.
+
+### Testing against Checkmk 2.4
+
+In 2.4, `cmk.ccc` (`cmk.ccc.debug`, `cmk.ccc.version`, ...) moved out of the monolith into
+a package of its own. A plugin that imports it needs `cmk-ccc` in `API_PACKAGES`, or the
+smoke test fails with `No module named 'cmk.ccc'`:
+
+```python
+CMK_VERSION = "v2.4.0p39"
+API_PACKAGES = ("cmk-agent-based", "cmk-ccc", "cmk-graphing", "cmk-rulesets",
+                "cmk-server-side-calls")
+```
+
+`oposs/cmk-oposs_bgp_mon` (`tests/conftest.py`) is a working example.
 
 ### The two traps
 

@@ -26,6 +26,15 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- The test harness now tests against the Checkmk tag `v2.3.0p52`. `CMK_VERSION = "2.3.0"`
+  named the 2.3.0 maintenance branch, not a release, so a cached `.cmk-api/` and a fresh
+  CI clone could test against different code.
+- The harness `pytest.ini` writes pytest's temporary files to `.pytest-tmp/` in the
+  project instead of the system temp dir, and the setup steps add `.pytest-tmp/` to
+  `.gitignore` next to `.cmk-api/`.
+- `08-testing-debugging.md` shows how to test against Checkmk 2.4: a `v2.4.0p…` tag and
+  the `cmk-ccc` package in `API_PACKAGES`, which became separate in 2.4.
+
 - The skill now lives in its own repository. It was part of `oposs/mkp-builder`, so a
   skill change cut a release of the packaging action and an action change told skill users
   their skill had updated; neither was true. The action stays at `oposs/mkp-builder` and

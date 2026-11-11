@@ -379,12 +379,13 @@ mkdir -p tests
 cp -r <skill-dir>/assets/tests/.        tests/
 cp    <skill-dir>/assets/pytest.ini     pytest.ini
 cp    <skill-dir>/assets/requirements-dev.txt requirements-dev.txt
-echo '.cmk-api/' >> .gitignore
+printf '.cmk-api/\n.pytest-tmp/\n' >> .gitignore
 pytest -q
 ```
 
-`tests/conftest.py` fetches the Checkmk API **from Checkmk**, pinned to `CMK_VERSION` at
-the top of that file, and caches it in the gitignored `.cmk-api/`. It is a blobless sparse
+`tests/conftest.py` fetches the Checkmk API **from Checkmk**, pinned to the tag in
+`CMK_VERSION` at the top of that file (`v2.3.0p52`), and caches it in the gitignored
+`.cmk-api/`. It is a blobless sparse
 clone of four packages: about 7 MB and a second or two, and nothing is installed — the API
 packages are namespace packages, so being on `sys.path` is enough.
 
