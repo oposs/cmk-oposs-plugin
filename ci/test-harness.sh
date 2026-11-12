@@ -22,6 +22,11 @@ grep -q "CMK_VERSION = \"$pin\"" "$REPO/skills/checkmk-plugin/references/08-test
     || fail "08-testing-debugging.md does not quote CMK_VERSION = \"$pin\""
 grep -q "(\`$pin\`)" "$REPO/skills/checkmk-plugin/SKILL.md" \
     || fail "SKILL.md does not name $pin"
+# The version.packaged examples must name the same release, since the docs
+# tell authors to pin the tag that matches it.
+stale=$(grep -rnE "version[.-]packaged( =|:) " "$REPO/skills" | grep -v "${pin#v}" || true)
+[ -z "$stale" ] || fail "version.packaged examples do not match $pin:
+$stale"
 
 mkdir -p "$WORK"
 [ -z "$(ls -A "$WORK")" ] || fail "$WORK is not empty"
