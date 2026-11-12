@@ -27,7 +27,12 @@ CMK_VERSION = "v2.3.0p52"   # a Checkmk tag: the version this plugin targets
 
 `CMK_VERSION` is a git ref of the Checkmk repository. Use a tag, which carries a `v`
 (`v2.3.0p52`). `2.3.0` without the `v` is the 2.3.0 maintenance branch: it moves, so the
-cached clone on one machine and the fresh clone in CI test against different code.
+test results change without a commit in the plugin, and the cached clone on one machine and
+the fresh clone in CI test against different code.
+
+Pin the tag that matches `version.packaged` in `.mkp-builder.ini`: with
+`version.packaged = 2.3.0p52`, set `CMK_VERSION = "v2.3.0p52"`. The tests then check the
+API of the Checkmk release the MKP says it was packaged for. Move both together.
 
 It is a blobless sparse clone of four packages — `cmk-agent-based`, `cmk-graphing`,
 `cmk-rulesets`, `cmk-server-side-calls` — roughly 7 MB and a second or two. Nothing is
