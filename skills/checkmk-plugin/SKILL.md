@@ -424,7 +424,7 @@ title = ACME Widget Monitor
 author = Your Name <you@example.com>
 description = Monitors ACME Widget devices
 version.min_required = 2.3.0p1
-version.packaged = 2.3.0p34
+version.packaged = 2.3.0p52
 download_url = https://github.com/yourorg/acme-widget-check
 validate_python = true
 ```

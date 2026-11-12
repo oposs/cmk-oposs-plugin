@@ -19,7 +19,7 @@ description = A plugin that does amazing things.
 
 # Checkmk Compatibility
 version.min_required = 2.3.0p1
-version.packaged = 2.3.0p34
+version.packaged = 2.3.0p52
 version.usable_until = 3.0.0
 
 # Optional
@@ -74,7 +74,7 @@ repository/
     author: 'Name <email>'
     description: 'What it does'
     version-min-required: '2.3.0p1'
-    version-packaged: '2.3.0p34'
+    version-packaged: '2.3.0p52'
     version-usable-until: '3.0.0'
     validate-python: 'true'
     verbose: 'true'

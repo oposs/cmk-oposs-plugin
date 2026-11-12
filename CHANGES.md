@@ -34,6 +34,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   `.gitignore` next to `.cmk-api/`.
 - `08-testing-debugging.md` shows how to test against Checkmk 2.4: a `v2.4.0p…` tag and
   the `cmk-ccc` package in `API_PACKAGES`, which became separate in 2.4.
+- `08-testing-debugging.md` and the harness `conftest.py` tell plugin authors to set
+  `CMK_VERSION` to the tag matching `version.packaged` in `.mkp-builder.ini`, and say why a
+  branch is wrong: it changes the test results without a commit in the plugin.
+  The `version.packaged` examples in `SKILL.md` and `mkp-builder.md` now show
+  `2.3.0p52` instead of `2.3.0p34`, so they match the pinned tag.
 
 - The skill now lives in its own repository. It was part of `oposs/mkp-builder`, so a
   skill change cut a release of the packaging action and an action change told skill users

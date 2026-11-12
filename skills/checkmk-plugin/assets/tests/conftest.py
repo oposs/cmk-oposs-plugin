@@ -26,7 +26,8 @@ import sys
 # The Checkmk version this plugin targets, as a git tag of the Checkmk
 # repository. Raise it to find out what breaks. Tags carry a `v`: `2.3.0`
 # without it is the 2.3.0 maintenance branch, which moves, so a cached clone
-# and a fresh CI clone of it test against different code.
+# and a fresh CI clone of it test against different code. Use the tag that
+# matches version.packaged in .mkp-builder.ini, and move both together.
 CMK_VERSION = "v2.3.0p52"
 
 HERE = pathlib.Path(__file__).resolve().parent
